@@ -1,0 +1,15 @@
+{
+  "name": "toll-tax-calculator",
+  "version": "1.0.0",
+  "description": "Toll Tax Calculator with frontend and backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "dotenv": "^10.0.0",
+    "cors": "^2.8.5",
+    "axios": "^0.24.0"
+  }
+}
