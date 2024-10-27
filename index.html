@@ -3,103 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toll Tax Calculator</title>
+    <title> Toll Tax Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        input[type="number"],
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        .result {
-            background-color: var(--secondary-color);
-            color: #fff;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-top: 2rem;
-            display: none;
-        }
-
-        .result h2 {
-            margin-top: 0;
-        }
-
-        .result p {
-            margin: 0.5rem 0;
-        }
-
-        .map-container {
-            height: 300px;
-            margin-top: 2rem;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-    </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Toll Tax Calculator</h1>
+        <h1> Toll Tax Calculator</h1>
         <form id="tollForm">
             <div class="form-group">
                 <label for="startPoint">Starting Point (Latitude, Longitude):</label>
@@ -129,7 +39,7 @@
             <button type="submit">Calculate Toll</button>
         </form>
         <div id="result" class="result">
-            <h2>Toll Calculation Results</h2>
+            <h2 class="heading">Toll Calculation Results</h2>
             <p>Total Distance: <span id="totalDistance"></span> km</p>
             <p>Local Road Distance: <span id="localRoadDistance"></span> km</p>
             <p>Highway Distance: <span id="highwayDistance"></span> km</p>
@@ -139,9 +49,14 @@
             <p>Total Tax: ₹<span id="totalTax"></span></p>
         </div>
         <div id="map" class="map-container"></div>
+<button class="feedback">
+    <a href="index2.html">FeedBack Form </a>
+</button>
+
     </div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrZ03xgFiR5aRTwkF1D38TCaMPI3IGs70&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBrZ03xgFiR5aRTwkF1D38TCaMPI3IGs70"></script>
     <script>
+         
         const form = document.getElementById('tollForm');
         const result = document.getElementById('result');
         let map, directionsService, directionsRenderer;
@@ -162,69 +77,64 @@
         });
 
         async function calculateToll() {
-            const startPoint = document.getElementById('startPoint').value.split(',').map(Number);
-            const endPoint = document.getElementById('endPoint').value.split(',').map(Number);
+            const startPoint = document.getElementById('startPoint').value;
+            const endPoint = document.getElementById('endPoint').value;
             const vehicleType = document.getElementById('vehicleType').value;
             const localRoadRate = parseFloat(document.getElementById('localRoadRate').value);
             const highwayRate = parseFloat(document.getElementById('highwayRate').value);
 
+            try {
+                const response = await fetch('/calculate-toll', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        startPoint,
+                        endPoint,
+                        vehicleType,
+                        localRoadRate,
+                        highwayRate
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                displayRoute(startPoint, endPoint);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while calculating the toll. Please try again.');
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('totalDistance').textContent = data.totalDistance;
+            document.getElementById('localRoadDistance').textContent = data.localRoadDistance;
+            document.getElementById('highwayDistance').textContent = data.highwayDistance;
+            document.getElementById('timeTaken').textContent = data.timeTaken;
+            document.getElementById('localRoadTax').textContent = data.localRoadTax;
+            document.getElementById('highwayTax').textContent = data.highwayTax;
+            document.getElementById('totalTax').textContent = data.totalTax;
+
+            result.style.display = 'block';
+        }
+
+        function displayRoute(startPoint, endPoint) {
             const request = {
-                origin: new google.maps.LatLng(startPoint[0], startPoint[1]),
-                destination: new google.maps.LatLng(endPoint[0], endPoint[1]),
+                origin: startPoint,
+                destination: endPoint,
                 travelMode: 'DRIVING'
             };
 
             directionsService.route(request, function(response, status) {
                 if (status === 'OK') {
                     directionsRenderer.setDirections(response);
-
-                    const route = response.routes[0];
-                    let totalDistance = 0;
-                    let highwayDistance = 0;
-                    let localRoadDistance = 0;
-                    let timeTaken = 0;
-
-                    route.legs.forEach(leg => {
-                        totalDistance += leg.distance.value;
-                        timeTaken += leg.duration.value;
-
-                        leg.steps.forEach(step => {
-                            if (step.travel_mode === 'DRIVING') {
-                                if (step.html_instructions.toLowerCase().includes('highway') || 
-                                    step.html_instructions.toLowerCase().includes('motorway')) {
-                                    highwayDistance += step.distance.value;
-                                } else {
-                                    localRoadDistance += step.distance.value;
-                                }
-                            }
-                        });
-                    });
-
-                    totalDistance /= 1000; // Convert to km
-                    highwayDistance /= 1000;
-                    localRoadDistance /= 1000;
-
-                    const localRoadTax = localRoadDistance * localRoadRate;
-                    const highwayTax = highwayDistance * highwayRate;
-                    const totalTax = localRoadTax + highwayTax;
-
-                    document.getElementById('totalDistance').textContent = totalDistance.toFixed(2);
-                    document.getElementById('localRoadDistance').textContent = localRoadDistance.toFixed(2);
-                    document.getElementById('highwayDistance').textContent = highwayDistance.toFixed(2);
-                    document.getElementById('timeTaken').textContent = formatTime(timeTaken);
-                    document.getElementById('localRoadTax').textContent = localRoadTax.toFixed(2);
-                    document.getElementById('highwayTax').textContent = highwayTax.toFixed(2);
-                    document.getElementById('totalTax').textContent = totalTax.toFixed(2);
-
-                    result.style.display = 'block';
                 }
             });
-        }
-
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            return `${hours} hours ${minutes} minutes`;
         }
 
         initMap();

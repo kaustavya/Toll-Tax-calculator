@@ -1,0 +1,114 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --background-color: #ecf0f1;
+    --text-color: #34495e;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: grey;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: black;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: burlywood;
+    /* margin-bottom: 1rem; */
+    font-size: 50px;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+label {
+    color: beige;
+font-size: larger;
+display: block;
+margin-bottom: 0.5rem;
+font-weight: bold;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 1rem;
+}
+
+.calculate {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    /* margin-left: 175px; */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    margin: 7px 7px 0px 309px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.feedback{
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    left: 23vw;
+    /* margin-left: 175px; */
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    position: relative;
+    margin: 40px 7px 0px 309px;
+    border-radius: 4px;
+    cursor: pointer;
+    bottom: 0px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.result {
+    background-color: var(--secondary-color);
+    color: #fff;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 2rem;
+    display: none;
+}
+
+.result h2 {
+    margin-top: 0;
+}
+
+.result p {
+    margin: 0.5rem 0;
+}
+
+.map-container {
+    height: 300px;
+    margin-top: 2rem;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
